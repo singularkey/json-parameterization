@@ -24,11 +24,31 @@ var _           = require('lodash');
 var debug       = require('debug')('json-parameterization');
 
 
+if (!String.prototype.startsWith) {
+  Object.defineProperty(String.prototype, 'startsWith', {
+    value: function(search, rawPos) {
+      var pos = rawPos > 0 ? rawPos|0 : 0;
+      return this.substring(pos, pos + search.length) === search;
+    }
+  });
+}
+
+var defaultIgnoreList = ['#', '/'];
+
 /** Parameterize input with params */
-var parameterize = function(input, params) {
+var parameterize = function(input, params, ignoreList = defaultIgnoreList) {
 
   // Evaluate an expression
   var evalExpr = function(expr, fallback) {
+    var ignore = false;
+
+    ignoreList.forEach(item => {
+      if (expr.startsWith(item)) ignore = true;
+    });
+
+    if (ignore) return fallback;
+
+
     // Find parts of the expression
     var parts = expr.split(/\|/);
 

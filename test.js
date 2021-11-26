@@ -133,4 +133,21 @@ suite('parameterize', function() {
     assert.deepEqual(parameterize(input, params), output,
                      "Predicted output wasn't matched!");
   });
+
+  test("Parameterize with ignore list", function() {
+    var input = {
+      "key": "{{#if true}}Hello World{{/if}}",
+      "key2": "{{value}}"
+    };
+    var params = {
+      value: 'Hello World'
+    };
+    var ignoreList = ['#'];
+    var output = {
+      key: "{{#if true}}Hello World{{/if}}",
+      key2: 'Hello World'
+    };
+    assert.deepEqual(parameterize(input, params, ignoreList), output,
+                     "Predicted output wasn't matched!");
+  })
 });
